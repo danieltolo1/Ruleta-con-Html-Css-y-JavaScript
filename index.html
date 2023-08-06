@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head runat="server">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>La ruleta Gandora de TikTok</title>
+    <script src="js/Winwheel.min.js"></script>
+
+    <script src="js/TweenMax.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles-confetti@2.11.0/tsparticles.confetti.bundle.min.js"></script>
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/styles.css" />
+    <script src="js/sweetalert.min.js"></script>
+    <link href="css/sweetalert.css" rel="stylesheet" />
+
+
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="La ruleta (Rifa cosas)" />
+    <meta property="og:description"
+        content="Con esta ruleta online puedes rifar lo que gustes, solo llena la lista y genera tu ruleta" />
+
+
+</head>
+
+<body>
+    <div class="header">
+        <h4 id="Mostrador" class="mensajeAnimado"></h4>
+    </div>
+
+
+    <div>
+        <style>
+            #canvasContainer {
+                background-image: url(img/TikTok4.png);
+                background-repeat: no-repeat;
+                background-position: center;
+                width: 700px;
+                height: 690px;
+                cursor: pointer;
+
+            }
+        </style>
+
+        <div class="containerMayor">
+            <!-- container-fluid -->
+
+
+            <div class="entre text-center">
+                <!-- col-3 text-center -->
+                <form id="formulario">
+                    <div class="form-group">
+                        <label for="formGroupExampleInput">Anuncio</label>
+                        <input id="anuncioEscrito" type="text" class="form-control"
+                            placeholder="ANUNCIATE - SUSCREIBETE">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Go</button>
+                </form>
+
+            </div>
+            <div class="containerMayor--canva">
+                <!-- col-7 text-center -->
+                <div>
+
+                </div>
+                <h1 id="ganador"></h1>
+                <div id="canvasContainer">
+                    <canvas id='Ruleta' width='700' height='690'>
+
+                        Canvas not supported, use another browser.
+                    </canvas>
+
+
+                </div>
+
+            </div>
+            <div class="WorkArea">
+                <!-- col-2 -->
+                <div Class="Subtitulo-WorkArea">
+                    <h4 class="subTtitleMini">Minimizar</h4>
+                    <button class="MinimizarBoton" value="" onclick="Minimizar()">-</button>
+                </div>
+                <div id="card" class="card">
+
+                    <div id="demo" class="card-body">
+
+                        <h4 class="card-title">PARTICIPANTES</h4>
+
+                        <textarea id="ListaElementos" class="form-control" rows="3">
+Equipo 1
+Equipo 2
+Equipo 3
+Equipo 4
+Equipo 5
+Equipo 6
+Equipo 7
+Equipo 8
+	  </textarea>
+
+                    </div>
+                </div>
+                <div class="botonesFuncion">
+                    <br />
+                    <input type="button" onclick="leerElementos()" class="btn btn1 btn-info " value="GR"
+                        data-toggle="tooltip" data-placement="bottom" title="GENERAR RULETA" />
+                    <input id="bigButton" class=" btn btn1 btn-success"
+                        onclick="objRuleta.startAnimation(), this.disabled=true;" value="GI" type="button"
+                        data-toggle="tooltip" data-placement="bottom" title="GIRAR" />
+                    <button id="buttonBorrar" type="button" class="btn btn1 btn-danger" data-toggle="tooltip"
+                        data-placement="bottom" title="BORRAR">BO</button><br />
+                    <button id="buttonReiniciar" type="button" class="btn btn1 btn-warning" data-toggle="tooltip"
+                        data-placement="bottom" title="REINICIAR">RE</button><br />
+
+
+                </div>
+
+                <div class="botonesTiempos">
+                    <button type="button" id="Button4" class="btn btn-light">4Seg</button>
+                    <button id="Button8" class="btn btn-light">8Seg</button>
+                    <button id="Button12" class="btn btn-light">12Seg</button>
+                </div>
+
+            </div>
+
+
+
+        </div>
+
+        <script>
+            var spin;
+            var objRuleta;
+            var winningSegment;
+            var distnaciaX = 150;
+            var distnaciaY = 50;
+            var spin = 2;
+            var typeA = "spinToStop"
+            var ctx;
+            var tiempos
+            var vueltas
+            var colores = ["7eecec", "ff7878", "fff171", "7280fd"];
+            var colores2 = []
+            const boton1 = document.querySelector("#buttonBorrar");
+            const boton2 = document.querySelector("#buttonReiniciar");
+            const boton4 = document.querySelector("#Button4");
+            const boton8 = document.querySelector("#Button8");
+            const boton12 = document.querySelector("#Button12");
+            const formularioAnuncio = document.querySelector("#formulario")
+
+            formularioAnuncio.addEventListener("submit", validarFormulario);
+
+            function validarFormulario(e) {
+                e.preventDefault();
+                const anuncio = document.querySelector("#anuncioEscrito").value
+                const mostrar = document.getElementById("Mostrador")
+                mostrar.textContent = anuncio;
+                console.log()
+            }
+
+
+
+
+            function Mensaje() {
+
+                winningSegment = objRuleta.getIndicatedSegment();
+                const respuesta = document.getElementById("ganador");
+                respuesta.textContent = winningSegment.text;
+                SonidoFinal();
+                SonidoAplausos();
+                Aniconfetti();
+
+                boton1.addEventListener("click", function (evento) {
+
+                    $('#ListaElementos').val($('#ListaElementos').val().replace(winningSegment.text, ""));
+                    leerElementos();
+                });
+
+
+                boton2.addEventListener("click", function (evento) {
+                    objRuleta.draw();
+                    DibujarTriangulo();
+                    bigButton.disabled = false;
+                    objRuleta.stopAnimation(false);
+                    objRuleta.rotationAngle = 0;
+                    boton8.disabled = false;
+                    boton12.disabled = false;
+                    boton4.disabled = false;
+                });
+
+
+
+
+
+                // swal({
+
+                //     title: " ¡ " + winningSegment.text + " !",
+                //     imageUrl: "img/Won.png",
+                //     showCancelButton: true,
+                //     confirmButtonColor: "#e74c3c",
+                //     confirmButtonText: "REINICIAR",
+                //     cancelButtonText: "BORRAR",
+                //     closeOnConfirm: true,
+                //     closeOnCancel: true
+                // },
+                //     function (isConfirm) {
+                //         if (isConfirm) {
+
+                //         } else {
+
+                //             $('#ListaElementos').val($('#ListaElementos').val().replace(winningSegment.text, ""));
+                //             leerElementos();
+
+                //         }
+                //         objRuleta.stopAnimation(false);
+                //         objRuleta.rotationAngle = 0;
+                //         objRuleta.draw();
+                //         DibujarTriangulo();
+                //         bigButton.disabled = false;
+                //     });
+
+            }
+
+            //flechita del centro para seleccionar el ganador 
+
+            function DibujarTriangulo() {
+                distnaciaX = 450;
+                distnaciaY = 320;
+                ctx = objRuleta.ctx;
+                ctx.strokeStyle = 'navy';
+                ctx.fillStyle = '#000000';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(distnaciaX + 170, distnaciaY + 5);
+                ctx.lineTo(distnaciaX + 170, distnaciaY + 46);
+                ctx.lineTo(distnaciaX + 100, distnaciaY + 23);
+                ctx.lineTo(distnaciaX + 170, distnaciaY + 5);
+                ctx.stroke();
+                ctx.fill();
+
+            }
+
+
+            function DibujarRuleta(ArregloElementos, tiempo, spins) {
+
+
+                objRuleta = new Winwheel({
+                    'canvasId': 'Ruleta',
+                    'numSegments': ArregloElementos.length,
+                    'outerRadius': 270,
+                    'innerRadius': 80,
+                    'segments': ArregloElementos,
+                    'animation':
+                    {
+                        'type': "spinToStop",
+                        'duration': tiempo,
+                        'spins': spins,
+                        'callbackFinished': 'Mensaje()',
+                        'callbackAfter': 'DibujarTriangulo()',
+                        'callbackSound': playSound,
+
+
+                    },
+                    'pins':    // Specify pin parameters.
+                    {
+                        'number': ArregloElementos.length,
+                        'outerRadius': 5,
+                        'margin': 10,
+                        'fillStyle': '#fdfdfd',
+                        'strokeStyle': '#d8d8d9'
+                    }
+
+
+                });
+                let audio = new Audio('./tick.mp3');  // Create audio object and load desired file.
+
+                function playSound() {
+                    // Stop and rewind the sound (stops it if already playing).
+                    audio.pause();
+                    audio.currentTime = 0;
+
+                    // Play the sound.
+                    audio.play();
+                }
+
+                DibujarTriangulo();
+
+            }
+
+
+
+
+
+
+            function leerElementos() {
+                txtListaElementos = $('#ListaElementos').val().trim();
+                var Elementos = txtListaElementos.split('\n');
+                var ElementosRuleta = [];
+
+
+
+
+
+                Elementos.forEach(function (Elemento, index) {
+                    for (let o = 0; o < colores.length; o++) {
+                        colores2.push(colores[o])
+                    }
+                    if (Elemento) {
+                        colors = index;
+                        ElementosRuleta.push({ 'fillStyle': "#" + colores2[index], 'text': Elemento });
+                    }
+                });
+
+                boton4.addEventListener("click", function (evento) {
+                    tiempos = 4;
+                    vueltas = 4;
+                    boton4.disabled = false;
+                    boton8.disabled = true;
+                    boton12.disabled = true;
+
+                });
+
+                boton8.addEventListener("click", function (evento) {
+                    tiempos = 8;
+                    vueltas = 8;
+                    boton8.disabled = false;
+                    boton4.disabled = true;
+                    boton12.disabled = true;
+                });
+
+                boton12.addEventListener("click", function (evento) {
+                    tiempos = 12;
+                    vueltas = 12;
+                    boton8.disabled = true;
+                    boton4.disabled = true;
+                    boton12.disabled = false;
+                });
+
+
+
+                DibujarRuleta(ElementosRuleta, tiempos, vueltas);
+            }
+
+            leerElementos();
+
+            var audio = new Audio('alarma.mp3');  // Create audio object and load desired file.
+            function SonidoFinal() {
+                audio.pause();
+                audio.currentTime = 0;
+                audio.play();
+            }
+
+            var audio2 = new Audio('./aplausos.mp3');  // Create audio object and load desired file.
+            function SonidoAplausos() {
+                audio2.pause();
+                audio2.currentTime = 0;
+                audio2.play();
+                console.log("prueba audio")
+            }
+
+
+
+            function Aniconfetti() {
+                const duration = 4 * 1000,
+                    animationEnd = Date.now() + duration,
+                    defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+                function randomInRange(min, max) {
+                    return Math.random() * (max - min) + min;
+                }
+
+                const interval = setInterval(function () {
+                    const timeLeft = animationEnd - Date.now();
+
+                    if (timeLeft <= 0) {
+                        return clearInterval(interval);
+                    }
+
+                    const particleCount = 50 * (timeLeft / duration);
+
+                    // since particles fall down, start a bit higher than random
+                    confetti(
+                        Object.assign({}, defaults, {
+                            particleCount,
+                            origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+                        })
+                    );
+                    confetti(
+                        Object.assign({}, defaults, {
+                            particleCount,
+                            origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+                        })
+                    );
+                }, 250);
+            }
+
+            function Minimizar() {
+                const cardDiv = document.getElementById("card");
+                if (cardDiv.className == "card") {
+                    cardDiv.setAttribute("class", "cardNone");
+                } else {
+                    cardDiv.setAttribute("class", "card");
+                }
+
+            }
+
+
+
+        </script>
+    </div>
+
+
+
+
+
+</body>
+
+</html>

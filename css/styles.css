@@ -1,0 +1,165 @@
+* {
+    margin: 0 auto;
+    box-sizing: border-box;
+
+}
+
+
+body {
+    background-image: url("../img/fondo1.png");
+
+}
+
+
+.header {
+    display: flex;
+    background-color: black;
+    height: 40px;
+    overflow-x: hidden;
+}
+
+
+.containerMayor {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.containerMayor--canva {
+    display: block;
+    flex-direction: row;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    justify-content: space-around;
+}
+
+#ganador {
+    margin: 0 auto;
+}
+
+.card-title {
+    color: white;
+}
+
+.card {
+    display: block;
+    background-color: black;
+
+    border-left-width: 10px;
+    border-left-color: #00f2ea;
+    border-right-width: 10px;
+    border-right-color: #ff0050;
+}
+
+
+.cardNone {
+    display: none;
+}
+
+.WorkArea {
+    margin-top: 30px;
+    margin-right: 10%;
+    width: 300px;
+}
+
+.Subtitulo-WorkArea {
+    display: flex;
+    height: 50px;
+    /* justify-content: space-between; */
+    padding: 5px 5px 0px 5px;
+    background-color: black;
+    border-radius: 10px 10px 0px 0px;
+
+
+
+
+}
+
+.subTtitleMini {
+    color: white;
+}
+
+.MinimizarBoton {
+    width: 15%;
+    margin-top: 10px;
+    margin-bottom: 2px;
+    margin-right: 20px;
+    height: 20px;
+    text-align: center;
+}
+
+.botonesFuncion {
+    display: flex;
+    background-color: black;
+    border-left-width: 10px;
+    border-left-color: #00f2ea;
+    border-right-width: 10px;
+    border-right-color: #ff0050;
+    padding-right: 10px;
+}
+
+.btn {
+
+    justify-content: center !important;
+    margin: 0px 0px 0px 20px !important;
+    margin-top: 20px !important;
+
+}
+
+.btn1 {
+    border-radius: 100% !important;
+    width: 50px;
+    height: 50px;
+}
+
+.btn-warning {
+    margin-bottom: 20px !important;
+
+}
+
+
+.botonesTiempos {
+    display: flex;
+    align-items: center;
+    background-color: black;
+    padding-bottom: 10px;
+    align-items: center;
+    padding-left: 15px;
+    border-radius: 0px 0px 10px 10px;
+
+}
+
+.btnInterno {
+    align-items: center;
+    border-radius: 10px;
+}
+
+.mensajeAnimado {
+    color: white;
+    animation: mover-izquierda-derecha 20s infinite;
+
+}
+
+.btn-primary {
+    margin-top: 2px !important;
+    margin-left: 0px !important;
+}
+
+
+.entre {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+}
+
+
+@keyframes mover-izquierda-derecha {
+    from {
+        transform: translateX(-1000px);
+    }
+
+    to {
+        transform: translateX(1000px);
+    }
+}
